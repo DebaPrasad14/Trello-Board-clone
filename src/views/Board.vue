@@ -139,6 +139,9 @@ export default {
   font-size: 13px;
   margin-top: 0.25rem;
 }
+p {
+  margin-bottom: 0;
+}
 .task-modal {
   position: absolute;
   top: 0;

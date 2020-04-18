@@ -1,6 +1,19 @@
 <template>
   <div class="task-view">
-    <div class="t-task">{{ task.name }}</div>
+    <div class="t-task">
+      {{ task }}
+      <input
+        type="text"
+        class="task-title"
+        :value="task.name"
+        @change="updateTaskProperty($event, 'name')"
+      />
+      <textarea
+        class="task-desc"
+        :value="task.description"
+        @change="updateTaskProperty($event, 'description')"
+      />
+    </div>
     <div class="t-close" @click="closeModal">
       <b-icon icon="x" scale="1.4"></b-icon>
     </div>
@@ -20,6 +33,14 @@ export default {
   methods: {
     closeModal() {
       this.$router.push({ name: "board" });
+    },
+    updateTaskProperty(e, key) {
+      console.log(e.target.value);
+      this.$store.commit("UPDATE_TASK", {
+        task: this.task,
+        key,
+        value: e.target.value
+      });
     }
   }
 };
@@ -63,5 +84,29 @@ export default {
 }
 .t-close:hover {
   background-color: #d4d6da;
+}
+.task-title {
+  padding: 0.5rem;
+  width: 100%;
+  display: block;
+  font-weight: bold;
+  font-size: 1.25rem;
+  border: none;
+  height: 2rem;
+}
+.task-title:focus,
+.task-desc:focus {
+  border: 2px solid #1190d0;
+  border-radius: 0.25rem;
+}
+.task-desc {
+  position: relative;
+  width: 100%;
+  background-color: transparent;
+  padding: 0.25rem 0.5rem;
+  border: none;
+  margin-top: 0.5rem;
+  height: 16rem;
+  line-height: 1.5;
 }
 </style>
