@@ -2,15 +2,35 @@
   <div>
     <navbar />
     <div class="board">
-      <!-- {{ board}} -->
       <div class="t-row">
         <div class="t-column" v-for="(column,idx) in board.columns" :key="idx">
           <div class="t-title">{{ column.name }}</div>
           <div class="task-wrapper">
-            <div class="task" v-for="(task,idx) in column.tasks" :key="idx" @click="goToTask(task)">
+            <div class="task" v-for="(task,id) in column.tasks" :key="id" @click="goToTask(task)">
               <span class="task-name">{{ task.name }}</span>
               <p class="task-name task-desc" v-if="task.description">{{ task.description }}</p>
             </div>
+            <div v-if="isClicked && columnId === idx">
+              <textarea
+                type="text"
+                class="input-box"
+                v-model="taskTitle"
+                placeholder="Enter a title for this card"
+                @keyup.enter="createTask(taskTitle, column.tasks)"
+              />
+              <button
+                type="button"
+                class="btn add-task"
+                @click="createTask(taskTitle, column.tasks)"
+              >Add card</button>
+              <button type="button" class="btn cancel-task" @click="cancelTask">&times;</button>
+            </div>
+            <button
+              type="button"
+              class="add-card"
+              @click="openInputBox(idx)"
+              v-else
+            >+ Add another card</button>
           </div>
         </div>
       </div>
@@ -29,6 +49,13 @@ export default {
   components: {
     Navbar
   },
+  data() {
+    return {
+      isClicked: false,
+      columnId: null,
+      taskTitle: ""
+    };
+  },
   computed: {
     ...mapState(["board"]),
     isTaskOpen() {
@@ -41,6 +68,25 @@ export default {
     },
     close() {
       this.$router.push({ name: "board" });
+    },
+    createTask(title, tasks) {
+      if (title.trim().length === 0) return;
+      this.$store.commit("CREATE_TASK", {
+        tasks,
+        name: title
+      });
+      this.reset();
+    },
+    openInputBox(id) {
+      this.columnId = id;
+      this.isClicked = !this.isClicked;
+    },
+    cancelTask() {
+      this.isClicked = !this.isClicked;
+      this.reset();
+    },
+    reset() {
+      this.taskTitle = "";
     }
   }
 };
@@ -59,7 +105,7 @@ export default {
   align-items: flex-start;
 }
 .t-column {
-  background: #cbd5e0;
+  background: #dee5ec;
   text-align: left;
   padding: 0.5rem;
   margin-right: 1rem;
@@ -100,5 +146,48 @@ export default {
   bottom: 0;
   left: 0;
   background: rgba(0, 0, 0, 0.5);
+}
+.add-card {
+  display: block;
+  padding: 0.3rem;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  font-size: 15px;
+  margin-top: 0.5rem;
+  color: #797d7f;
+  border-radius: 0.25rem;
+}
+.add-card:hover {
+  background-color: #d5dbdb;
+}
+button:focus,
+button:active {
+  outline: none;
+  box-shadow: none;
+}
+.input-box {
+  display: block;
+  padding: 0.3rem;
+  width: 100%;
+  background-color: #fff;
+  border: none;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border-radius: 0.25rem;
+  color: #4a5568;
+  padding: 0.5rem;
+}
+.add-task {
+  background-color: #9abfe2;
+  font-size: 15px;
+  margin-bottom: none;
+  color: #4a5568;
+}
+.cancel-task {
+  font-size: 30px;
+  margin-bottom: none;
+  padding: 0 15px;
+  color: #4a5568;
 }
 </style>
