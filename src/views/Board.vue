@@ -7,12 +7,15 @@
         <div class="t-column" v-for="(column,idx) in board.columns" :key="idx">
           <div class="t-title">{{ column.name }}</div>
           <div class="task-wrapper">
-            <div class="task" v-for="(task,idx) in column.tasks" :key="idx">
+            <div class="task" v-for="(task,idx) in column.tasks" :key="idx" @click="goToTask(task)">
               <span class="task-name">{{ task.name }}</span>
               <p class="task-name task-desc" v-if="task.description">{{ task.description }}</p>
             </div>
           </div>
         </div>
+      </div>
+      <div class="task-modal" v-if="isTaskOpen" @click.self="close">
+        <router-view />
       </div>
     </div>
   </div>
@@ -26,7 +29,20 @@ export default {
   components: {
     Navbar
   },
-  computed: mapState(["board"])
+  computed: {
+    ...mapState(["board"]),
+    isTaskOpen() {
+      return this.$route.name === "task";
+    }
+  },
+  methods: {
+    goToTask(task) {
+      this.$router.push({ name: "task", params: { id: task.id } });
+    },
+    close() {
+      this.$router.push({ name: "board" });
+    }
+  }
 };
 </script>
 
@@ -67,6 +83,7 @@ export default {
   border-radius: 0.25rem;
   background-color: #fff;
   color: #4a5568;
+  cursor: pointer;
 }
 .task-name {
   width: 100%;
@@ -75,5 +92,13 @@ export default {
 .task-desc {
   font-size: 13px;
   margin-top: 0.25rem;
+}
+.task-modal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
 }
 </style>
