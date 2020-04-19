@@ -3,14 +3,28 @@
     <navbar />
     <div class="board">
       <div class="t-row">
-        <div class="t-column" v-for="(column,idx) in board.columns" :key="idx">
+        <div
+          class="t-column"
+          v-for="(column,colId) in board.columns"
+          :key="colId"
+          @drop="moveTask($event, column.tasks)"
+          @dragover.prevent
+          @dragenter.prevent
+        >
           <div class="t-title">{{ column.name }}</div>
           <div class="task-wrapper">
-            <div class="task" v-for="(task,id) in column.tasks" :key="id" @click="goToTask(task)">
+            <div
+              class="task"
+              v-for="(task,taskId) in column.tasks"
+              :key="taskId"
+              draggable
+              @dragstart="pickupTask($event, taskId, colId)"
+              @click="goToTask(task)"
+            >
               <span class="task-name">{{ task.name }}</span>
               <p class="task-name task-desc" v-if="task.description">{{ task.description }}</p>
             </div>
-            <div v-if="isClicked && columnId === idx">
+            <div v-if="isClicked && columnId === colId">
               <textarea
                 type="text"
                 class="input-box"
@@ -28,7 +42,7 @@
             <button
               type="button"
               class="add-card"
-              @click="openInputBox(idx)"
+              @click="openInputBox(colId)"
               v-else
             >+ Add another card</button>
           </div>
@@ -84,6 +98,25 @@ export default {
     cancelTask() {
       this.isClicked = !this.isClicked;
       this.reset();
+    },
+    pickupTask(e, taskIndex, fromColumnIndex) {
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.dropEffect = "move";
+
+      e.dataTransfer.setData("task-index", taskIndex);
+      e.dataTransfer.setData("from-column-index", fromColumnIndex);
+    },
+    moveTask(e, toTasks) {
+      console.log("dp", this.board);
+      const fromColumnIndex = e.dataTransfer.getData("from-column-index");
+      const fromTasks = this.board.columns[fromColumnIndex].tasks;
+      const taskIndex = e.dataTransfer.getData("task-index");
+
+      this.$store.commit("MOVE_TASK", {
+        fromTasks,
+        toTasks,
+        taskIndex
+      });
     },
     reset() {
       this.taskTitle = "";
