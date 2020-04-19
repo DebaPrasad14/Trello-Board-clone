@@ -44,12 +44,20 @@
               >Add card</button>
               <button type="button" class="btn cancel-task" @click="cancelTask">&times;</button>
             </div>
-            <button
-              type="button"
-              class="add-card"
-              @click="openInputBox(colId)"
-              v-else
-            >+ Add another card</button>
+            <div v-else>
+              <button
+                type="button"
+                class="add-card"
+                @click="openInputBox(colId)"
+                v-if="column.tasks.length > 0"
+              >+ Add another card</button>
+              <button
+                type="button"
+                class="add-card"
+                @click="openInputBox(colId)"
+                v-else
+              >+ Add a card</button>
+            </div>
           </div>
         </div>
         <div class="add-column">

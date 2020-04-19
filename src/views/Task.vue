@@ -1,7 +1,6 @@
 <template>
   <div class="task-view">
     <div class="t-task">
-      {{ task }}
       <input
         type="text"
         class="task-title"
