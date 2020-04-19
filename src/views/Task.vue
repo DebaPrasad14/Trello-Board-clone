@@ -34,7 +34,6 @@ export default {
       this.$router.push({ name: "board" });
     },
     updateTaskProperty(e, key) {
-      console.log(e.target.value);
       this.$store.commit("UPDATE_TASK", {
         task: this.task,
         key,
