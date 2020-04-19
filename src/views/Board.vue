@@ -29,7 +29,7 @@
               <span class="task-name">{{ task.name }}</span>
               <p class="task-name task-desc" v-if="task.description">{{ task.description }}</p>
             </div>
-            <div v-if="isClicked && columnId === colId">
+            <div v-if="isTaskClicked && columnId === colId">
               <textarea
                 type="text"
                 class="input-box"
@@ -52,6 +52,24 @@
             >+ Add another card</button>
           </div>
         </div>
+        <div class="add-column">
+          <div v-if="isAddListClicked" class="list-form-container">
+            <div class="list-form">
+              <input
+                type="text"
+                class="column-input"
+                placeholder="Enter list title..."
+                v-model="newColumnName"
+                @keyup.enter="createColumn"
+              />
+            </div>
+            <div class="list-btn-container">
+              <button type="button" class="btn add-task" @click="createColumn()">Add List</button>
+              <button type="button" class="btn cancel-task" @click="cancelColumn">&times;</button>
+            </div>
+          </div>
+          <button type="button" class="add-list-btn" @click="addNewList" v-else>+ Add another list</button>
+        </div>
       </div>
       <div class="task-modal" v-if="isTaskOpen" @click.self="close">
         <router-view />
@@ -70,9 +88,11 @@ export default {
   },
   data() {
     return {
-      isClicked: false,
+      isTaskClicked: false,
+      isAddListClicked: false,
       columnId: null,
-      taskTitle: ""
+      taskTitle: "",
+      newColumnName: ""
     };
   },
   computed: {
@@ -96,13 +116,27 @@ export default {
       });
       this.reset();
     },
+    createColumn() {
+      this.$store.commit("CREATE_COLUMN", {
+        name: this.newColumnName
+      });
+
+      this.newColumnName = "";
+    },
     openInputBox(id) {
       this.columnId = id;
-      this.isClicked = !this.isClicked;
+      this.isTaskClicked = !this.isTaskClicked;
+    },
+    addNewList() {
+      this.isAddListClicked = !this.isAddListClicked;
     },
     cancelTask() {
-      this.isClicked = !this.isClicked;
+      this.isTaskClicked = !this.isTaskClicked;
       this.reset();
+    },
+    cancelColumn() {
+      this.isAddListClicked = !this.isAddListClicked;
+      this.newColumnName = "";
     },
     pickupTask(e, taskIndex, fromColumnIndex) {
       e.dataTransfer.effectAllowed = "move";
@@ -252,11 +286,54 @@ button:active {
   font-size: 15px;
   margin-bottom: none;
   color: #4a5568;
+  padding: 0.25rem 0.7rem;
 }
 .cancel-task {
   font-size: 30px;
   margin-bottom: none;
   padding: 0 15px;
   color: #4a5568;
+}
+.add-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 350px;
+  border-radius: 0.25rem;
+  margin-right: 1rem;
+  background-color: transparent;
+}
+.column-input {
+  padding: 0.5rem;
+  flex-grow: 1;
+  height: 2rem;
+  width: 100%;
+  border: 2px solid #1190d0;
+  border-radius: 0.25rem;
+}
+.add-list-btn {
+  text-align: left;
+  margin-right: 1rem;
+  border: 1px solid #979797;
+  height: 2.3rem;
+  border-radius: 0.25rem;
+  background-color: #797d7f;
+  color: #fff;
+  opacity: 0.6;
+}
+.add-list-btn:hover {
+  opacity: 0.5;
+}
+.list-form-container {
+  display: block;
+  background: #dee5ec;
+  border-radius: 0.25rem;
+  padding: 0.3rem;
+  padding-bottom: 0.5rem;
+  margin-right: 1rem;
+}
+.list-btn-container {
+  text-align: left;
+  height: 2.4rem;
+  padding-top: 0;
 }
 </style>
