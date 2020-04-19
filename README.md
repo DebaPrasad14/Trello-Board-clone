@@ -1,5 +1,7 @@
-# trello
-
+# trello-board-clone
+```
+Deployed on netlify: https://trello-board-clone.netlify.app
+```
 ## Project setup
 ```
 npm install
