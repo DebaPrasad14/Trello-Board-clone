@@ -1,15 +1,35 @@
 <template>
   <div class="task-view">
     <div class="t-task">
-      <input
+      <!-- <input
         type="text"
         class="task-title"
-        :value="task.name"
+        :value="task[0].name"
         @change="updateTaskProperty($event, 'name')"
-      />
+      />-->
+      <div class="row">
+        <b-icon icon="card-heading" scale="1.3" class="mt-2 ml-3" />
+        <div>
+          <input
+            type="text"
+            class="task-title ml-2"
+            :value="task[0].name"
+            @change="updateTaskProperty($event, 'name')"
+          />
+        </div>
+      </div>
+      <p class="list-desc">
+        in list
+        <span class="list-name">{{ task[1] }}</span>
+      </p>
+      <p class="mt-3">
+        <span class="mr-3">
+          <b-icon icon="justify-left" scale="1.3" />
+        </span>Description
+      </p>
       <textarea
         class="task-desc"
-        :value="task.description"
+        :value="task[0].description"
         @change="updateTaskProperty($event, 'description')"
       />
     </div>
@@ -84,7 +104,7 @@ export default {
   background-color: #d4d6da;
 }
 .task-title {
-  padding: 0.5rem;
+  padding: 0.25rem;
   width: 100%;
   display: block;
   font-weight: bold;
@@ -99,12 +119,27 @@ export default {
 }
 .task-desc {
   position: relative;
-  width: 100%;
-  background-color: transparent;
+  width: 95%;
+  background-color: #f1f1f1;
   padding: 0.25rem 0.5rem;
-  border: none;
-  margin-top: 0.5rem;
-  height: 16rem;
+  border: 1px solid #f5f2f2;
+  margin: 0.5rem;
+  margin-left: 1.5rem;
+  height: 10rem;
   line-height: 1.5;
+  overflow-y: auto;
+  border-radius: 0.25rem;
+  margin-top: -0.2rem;
+}
+.task-desc:hover {
+  background: #eceaea;
+}
+.list-desc {
+  font-size: 0.8rem;
+  padding-left: 2rem;
+  padding-top: -1.3rem;
+}
+.list-name {
+  text-decoration: underline;
 }
 </style>
